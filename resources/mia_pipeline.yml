@@ -161,4 +161,4 @@ resources:
 
       email_notifications:
         on_failure:
-          - "${var.notification_email}"22
+          - "${var.notification_email}"
