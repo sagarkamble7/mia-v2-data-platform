@@ -13,21 +13,35 @@ resources:
 
       tasks:
 
-        - task_key: raw_ingestion
+        # =========================
+        # RAW INGESTION
+        # =========================
+
+        - task_key: raw_files_extraction
           job_cluster_key: mia_job_cluster
           spark_python_task:
             python_file: ../src/ingestion/raw_files_extraction.py
           max_retries: 2
           min_retry_interval_millis: 60000
 
+
+        # =========================
+        # BRONZE
+        # =========================
+
         - task_key: bronze_ingest
           job_cluster_key: mia_job_cluster
           depends_on:
-            - task_key: raw_ingestion
+            - task_key: raw_files_extraction
           spark_python_task:
             python_file: ../src/bronze/bronze.py
           max_retries: 2
           min_retry_interval_millis: 60000
+
+
+        # =========================
+        # SILVER
+        # =========================
 
         - task_key: silver_products
           job_cluster_key: mia_job_cluster
@@ -35,6 +49,8 @@ resources:
             - task_key: bronze_ingest
           spark_python_task:
             python_file: ../src/silver/silver_products.py
+            parameters:
+              - "--catalog=${var.catalog}"
           max_retries: 2
           min_retry_interval_millis: 60000
 
@@ -44,6 +60,8 @@ resources:
             - task_key: bronze_ingest
           spark_python_task:
             python_file: ../src/silver/silver_users.py
+            parameters:
+              - "--catalog=${var.catalog}"
           max_retries: 2
           min_retry_interval_millis: 60000
 
@@ -53,57 +71,70 @@ resources:
             - task_key: bronze_ingest
           spark_python_task:
             python_file: ../src/silver/silver_carts.py
+            parameters:
+              - "--catalog=${var.catalog}"
           max_retries: 2
           min_retry_interval_millis: 60000
 
-        - task_key: gold_date
+
+        # =========================
+        # GOLD DIMENSIONS
+        # =========================
+
+        - task_key: dim_date
           job_cluster_key: mia_job_cluster
           spark_python_task:
             python_file: ../src/gold/dim_date.py
             parameters:
-              - "--catalog"
-              - "${var.catalog}"
+              - "--catalog=${var.catalog}"
           max_retries: 2
           min_retry_interval_millis: 60000
 
-        - task_key: gold_product
+        - task_key: dim_product
           job_cluster_key: mia_job_cluster
           depends_on:
             - task_key: silver_products
           spark_python_task:
             python_file: ../src/gold/dim_product.py
             parameters:
-              - "--catalog"
-              - "${var.catalog}"
+              - "--catalog=${var.catalog}"
           max_retries: 2
           min_retry_interval_millis: 60000
 
-        - task_key: gold_customer
+        - task_key: dim_customer
           job_cluster_key: mia_job_cluster
           depends_on:
             - task_key: silver_users
           spark_python_task:
             python_file: ../src/gold/dim_customer.py
             parameters:
-              - "--catalog"
-              - "${var.catalog}"
+              - "--catalog=${var.catalog}"
           max_retries: 2
           min_retry_interval_millis: 60000
+
+
+        # =========================
+        # GOLD FACT
+        # =========================
 
         - task_key: fact_orders
           job_cluster_key: mia_job_cluster
           depends_on:
-            - task_key: gold_date
-            - task_key: gold_product
-            - task_key: gold_customer
+            - task_key: dim_date
+            - task_key: dim_product
+            - task_key: dim_customer
             - task_key: silver_carts
           spark_python_task:
             python_file: ../src/gold/fact_orders.py
             parameters:
-              - "--catalog"
-              - "${var.catalog}"
+              - "--catalog=${var.catalog}"
           max_retries: 2
           min_retry_interval_millis: 60000
+
+
+        # =========================
+        # GOLD DATA QUALITY
+        # =========================
 
         - task_key: gold_dq_checks
           job_cluster_key: mia_job_cluster
@@ -112,13 +143,22 @@ resources:
           spark_python_task:
             python_file: ../src/gold/gold_dq_checks.py
             parameters:
-              - "--catalog"
-              - "${var.catalog}"
+              - "--catalog=${var.catalog}"
+
+
+      # =========================
+      # SCHEDULE
+      # =========================
 
       schedule:
         quartz_cron_expression: "0 0 3 * * ?"
         timezone_id: "Asia/Kolkata"
 
+
+      # =========================
+      # EMAIL NOTIFICATION
+      # =========================
+
       email_notifications:
         on_failure:
-          - "${var.notification_email}"
+          - "${var.notification_email}"22
