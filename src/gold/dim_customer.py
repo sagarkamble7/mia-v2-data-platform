@@ -3,8 +3,13 @@ from pyspark.sql.window import Window
 from delta.tables import DeltaTable
 
 
-dbutils.widgets.text("catalog", "miav2databricks")
-CATALOG = dbutils.widgets.get("catalog")
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--catalog", required=True)
+args = parser.parse_args()
+
+CATALOG = args.catalog
 
 SOURCE_TABLE = f"{CATALOG}.silver.silver_users"
 TARGET_TABLE = f"{CATALOG}.gold.dim_customer"

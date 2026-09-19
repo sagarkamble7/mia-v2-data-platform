@@ -1,9 +1,10 @@
 from pyspark.sql.functions import *
+import argparse
 
-
-dbutils.widgets.text("catalog", "miav2databricks")
-
-CATALOG = dbutils.widgets.get("catalog")
+parser = argparse.ArgumentParser()
+parser.add_argument("--catalog", required=True)
+args = parser.parse_args()
+CATALOG = args.catalog
 
 TARGET_TABLE = f"{CATALOG}.gold.dim_date"
 

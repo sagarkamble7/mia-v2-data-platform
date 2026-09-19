@@ -1,4 +1,11 @@
 from pyspark.sql.functions import *
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--catalog", required=True)
+args = parser.parse_args()
+
+CATALOG = args.catalog
 
 
 bronze_mockaroo_path = (
@@ -13,13 +20,12 @@ silver_checkpoint_path = (
     "abfss://silver@miav2storage.dfs.core.windows.net/_checkpoints/silver_products_merge_v1"
 )
 
-silver_table = "miav2databricks.silver.silver_products"
-
+silver_table = f"{CATALOG}.silver.silver_products"
 
 spark.sql("CREATE SCHEMA IF NOT EXISTS miav2databricks.silver")
 
 spark.sql("""
-    CREATE TABLE IF NOT EXISTS miav2databricks.silver.silver_products (
+    CREATE TABLE IF NOT EXISTS {silver_table} (
         product_key          STRING,
         product_name         STRING,
         category             STRING,
@@ -119,7 +125,7 @@ def merge_silver_products(microbatch_df, batch_id):
     updates_df.createOrReplaceTempView("silver_products_updates")
 
     active_spark.sql("""
-        MERGE INTO miav2databricks.silver.silver_products AS target
+        MERGE INTO {silver_table} AS target
         USING silver_products_updates AS source
 
         ON  target.source_system = source.source_system

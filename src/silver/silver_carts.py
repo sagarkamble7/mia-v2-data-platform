@@ -1,10 +1,11 @@
-from pyspark.sql.functions import (
-    col,
-    explode,
-    md5,
-    concat_ws,
-    current_timestamp
-)
+from pyspark.sql.functions import *
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--catalog", required=True)
+args = parser.parse_args()
+
+CATALOG = args.catalog
 
 
 bronze_carts_path = (
@@ -15,8 +16,7 @@ silver_checkpoint_path = (
     "abfss://silver@miav2storage.dfs.core.windows.net/_checkpoints/silver_carts_merge_v1"
 )
 
-silver_table = "miav2databricks.silver.silver_carts"
-
+silver_table = f"{CATALOG}.silver.silver_carts"
 
 spark.sql("CREATE SCHEMA IF NOT EXISTS miav2databricks.silver")
 

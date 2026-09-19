@@ -1,5 +1,11 @@
 from pyspark.sql.functions import *
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--catalog", required=True)
+args = parser.parse_args()
+
+CATALOG = args.catalog
 
 bronze_users_path = (
     "abfss://bronze@miav2storage.dfs.core.windows.net/dummyjson/users"
@@ -9,13 +15,12 @@ silver_checkpoint_path = (
     "abfss://silver@miav2storage.dfs.core.windows.net/_checkpoints/silver_users_merge_v1"
 )
 
-silver_table = "miav2databricks.silver.silver_users"
-
+silver_table = f"{CATALOG}.silver.silver_users"
 
 spark.sql("CREATE SCHEMA IF NOT EXISTS miav2databricks.silver")
 
 spark.sql("""
-    CREATE TABLE IF NOT EXISTS miav2databricks.silver.silver_users (
+    CREATE TABLE IF NOT EXISTS {silver_table} (
         customer_key        STRING,
         first_name          STRING,
         last_name           STRING,
@@ -96,7 +101,7 @@ def merge_silver_users(microbatch_df, batch_id):
     updates_df.createOrReplaceTempView("silver_users_updates")
 
     active_spark.sql("""
-        MERGE INTO miav2databricks.silver.silver_users AS target
+        MERGE INTO {silver_table} AS target
         USING silver_users_updates AS source
 
         ON target.customer_key = source.customer_key

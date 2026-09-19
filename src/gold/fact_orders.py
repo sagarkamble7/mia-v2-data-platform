@@ -1,15 +1,11 @@
-from pyspark.sql.functions import (
-    col,
-    to_date,
-    current_timestamp
-)
+from pyspark.sql.functions import *
 from pyspark.sql import Window
-from pyspark.sql.functions import row_number, desc
+import argparse
 
-
-dbutils.widgets.text("catalog", "miav2databricks")
-
-CATALOG = dbutils.widgets.get("catalog")
+parser = argparse.ArgumentParser()
+parser.add_argument("--catalog", required=True)
+args = parser.parse_args()
+CATALOG = args.catalog
 
 SOURCE_TABLE = f"{CATALOG}.silver.silver_carts"
 TARGET_TABLE = f"{CATALOG}.gold.fact_orders"

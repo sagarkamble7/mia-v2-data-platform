@@ -1,0 +1,124 @@
+resources:
+  jobs:
+    mia_pipeline:
+      name: mia-pipeline-${bundle.target}
+
+      job_clusters:
+        - job_cluster_key: mia_job_cluster
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+            data_security_mode: SINGLE_USER
+
+      tasks:
+
+        - task_key: raw_ingestion
+          job_cluster_key: mia_job_cluster
+          spark_python_task:
+            python_file: ../src/ingestion/raw_files_extraction.py
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: bronze_ingest
+          job_cluster_key: mia_job_cluster
+          depends_on:
+            - task_key: raw_ingestion
+          spark_python_task:
+            python_file: ../src/bronze/bronze.py
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: silver_products
+          job_cluster_key: mia_job_cluster
+          depends_on:
+            - task_key: bronze_ingest
+          spark_python_task:
+            python_file: ../src/silver/silver_products.py
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: silver_users
+          job_cluster_key: mia_job_cluster
+          depends_on:
+            - task_key: bronze_ingest
+          spark_python_task:
+            python_file: ../src/silver/silver_users.py
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: silver_carts
+          job_cluster_key: mia_job_cluster
+          depends_on:
+            - task_key: bronze_ingest
+          spark_python_task:
+            python_file: ../src/silver/silver_carts.py
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: gold_date
+          job_cluster_key: mia_job_cluster
+          spark_python_task:
+            python_file: ../src/gold/dim_date.py
+            parameters:
+              - "--catalog"
+              - "${var.catalog}"
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: gold_product
+          job_cluster_key: mia_job_cluster
+          depends_on:
+            - task_key: silver_products
+          spark_python_task:
+            python_file: ../src/gold/dim_product.py
+            parameters:
+              - "--catalog"
+              - "${var.catalog}"
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: gold_customer
+          job_cluster_key: mia_job_cluster
+          depends_on:
+            - task_key: silver_users
+          spark_python_task:
+            python_file: ../src/gold/dim_customer.py
+            parameters:
+              - "--catalog"
+              - "${var.catalog}"
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: fact_orders
+          job_cluster_key: mia_job_cluster
+          depends_on:
+            - task_key: gold_date
+            - task_key: gold_product
+            - task_key: gold_customer
+            - task_key: silver_carts
+          spark_python_task:
+            python_file: ../src/gold/fact_orders.py
+            parameters:
+              - "--catalog"
+              - "${var.catalog}"
+          max_retries: 2
+          min_retry_interval_millis: 60000
+
+        - task_key: gold_dq_checks
+          job_cluster_key: mia_job_cluster
+          depends_on:
+            - task_key: fact_orders
+          spark_python_task:
+            python_file: ../src/gold/gold_dq_checks.py
+            parameters:
+              - "--catalog"
+              - "${var.catalog}"
+
+      schedule:
+        quartz_cron_expression: "0 0 3 * * ?"
+        timezone_id: "Asia/Kolkata"
+
+      email_notifications:
+        on_failure:
+          - "${var.notification_email}"

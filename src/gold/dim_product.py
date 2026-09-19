@@ -1,10 +1,13 @@
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from delta.tables import DeltaTable
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--catalog", required=True)
+args = parser.parse_args()
 
-dbutils.widgets.text("catalog", "miav2databricks")
-CATALOG = dbutils.widgets.get("catalog")
+CATALOG = args.catalog
 
 SOURCE_TABLE = f"{CATALOG}.silver.silver_products"
 TARGET_TABLE = f"{CATALOG}.gold.dim_product"

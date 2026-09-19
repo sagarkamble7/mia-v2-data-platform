@@ -1,0 +1,29 @@
+bundle:
+  name: mia-v2
+
+variables:
+  catalog:
+    description: "Unity Catalog name this environment writes to"
+    default: miav2databricks
+  notification_email:
+    description: "Email address for job failure alerts"
+    default: "sagarnkamble7@gmail.com"
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405607225047022.2.azuredatabricks.net
+    variables:
+      catalog: miav2databricks
+
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-7405607225047022.2.azuredatabricks.net
+    variables:
+      catalog: miav2databricks
+
+include:
+  - resources/*.yml
