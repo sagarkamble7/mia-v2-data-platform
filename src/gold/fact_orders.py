@@ -143,7 +143,7 @@ else:
             cart_id,
             customer_key,
             product_id_ref,
-            product_name,
+            product_title,
             unit_price,
             quantity,
             line_total,
