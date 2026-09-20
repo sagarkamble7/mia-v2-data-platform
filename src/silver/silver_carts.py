@@ -57,7 +57,7 @@ silver_carts = (
         col("cart_id"),
         col("customer_key"),
         col("product.id").alias("product_id_ref"),
-        col("product.title").alias("product_name"),
+        col("product.title").alias("product_title"),
         col("product.price").alias("unit_price"),
         col("product.quantity").alias("quantity"),
         col("product.total").alias("line_total"),

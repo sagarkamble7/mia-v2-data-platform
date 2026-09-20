@@ -24,7 +24,7 @@ silver_table = f"{CATALOG}.silver.silver_products"
 
 spark.sql("CREATE SCHEMA IF NOT EXISTS miav2databricks.silver")
 
-spark.sql("""
+spark.sql(f"""
     CREATE TABLE IF NOT EXISTS {silver_table} (
         product_key          STRING,
         product_name         STRING,
@@ -124,7 +124,7 @@ def merge_silver_products(microbatch_df, batch_id):
 
     updates_df.createOrReplaceTempView("silver_products_updates")
 
-    active_spark.sql("""
+    active_spark.sql(f"""
         MERGE INTO {silver_table} AS target
         USING silver_products_updates AS source
 
