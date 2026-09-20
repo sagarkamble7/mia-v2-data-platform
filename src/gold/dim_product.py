@@ -254,22 +254,37 @@ changed_products_keys = (
 )
 
 
+# if changed_products_keys:
+
+#     for row in changed_products_keys:
+
+#         dim_product_table.update(
+#             condition=f"""
+#                 source_system = '{row['source_system']}'
+#                 AND product_key = '{row['product_key']}'
+#                 AND is_current = true
+#             """,
+#             set={
+#                 "is_current": "false",
+#                 "effective_end_date": "current_date()",
+#                 "dw_updated_at": "current_timestamp()"
+#             }
+#         )
 if changed_products_keys:
 
-    for row in changed_products_keys:
+    conditions_sql = " OR ".join([
+        f"(source_system = '{row['source_system']}' AND product_key = '{row['product_key']}')"
+        for row in changed_products_keys
+    ])
 
-        dim_product_table.update(
-            condition=f"""
-                source_system = '{row['source_system']}'
-                AND product_key = '{row['product_key']}'
-                AND is_current = true
-            """,
-            set={
-                "is_current": "false",
-                "effective_end_date": "current_date()",
-                "dw_updated_at": "current_timestamp()"
-            }
-        )
+    dim_product_table.update(
+        condition=f"({conditions_sql}) AND is_current = true",
+        set={
+            "is_current": "false",
+            "effective_end_date": "current_date()",
+            "dw_updated_at": "current_timestamp()"
+        }
+    )
 
 
 rows_to_insert = changed_products.unionByName(
