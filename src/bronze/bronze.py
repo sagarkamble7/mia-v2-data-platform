@@ -79,9 +79,9 @@ def stream_dummyjson_entity_to_bronze(entity_name: str):
     )
 
     bronze_stream = raw_stream.select(
-        "*",
-        input_file_name().alias("_source_file"),
-        current_timestamp().alias("_ingested_at")
+    "*",
+    col("_metadata.file_path").alias("_source_file"),
+    current_timestamp().alias("_ingested_at")
     )
 
     query = (
