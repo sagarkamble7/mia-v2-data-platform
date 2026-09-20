@@ -340,5 +340,5 @@ if rows_to_insert.count() > 0:
 
 set_last_processed_version(new_silver_version)
 
-changed_products.unpersist()
-new_products.unpersist()
+# changed_products.unpersist()
+# new_products.unpersist()

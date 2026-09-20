@@ -393,5 +393,5 @@ if new_version > last_version:
     )
 
 
-changed_customers.unpersist()
-new_customers.unpersist()
+# changed_customers.unpersist()
+# new_customers.unpersist()
