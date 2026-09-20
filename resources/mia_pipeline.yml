@@ -3,13 +3,18 @@ resources:
     mia_pipeline:
       name: mia-pipeline-${bundle.target}
 
-      job_clusters:
-        - job_cluster_key: mia_job_cluster
-          new_cluster:
-            spark_version: "15.4.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
-            data_security_mode: SINGLE_USER
+      # job_clusters:
+      #   - job_cluster_key: mia_job_cluster
+      #     new_cluster:
+      #       spark_version: "15.4.x-scala2.12"
+      #       node_type_id: "Standard_DS3_v2"
+      #       num_workers: 1
+      #       data_security_mode: SINGLE_USER
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+          
 
       tasks:
 
@@ -18,7 +23,8 @@ resources:
         # =========================
 
         - task_key: raw_files_extraction
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           spark_python_task:
             python_file: ../src/ingestion/raw_files_extraction.py
           max_retries: 2
@@ -30,7 +36,8 @@ resources:
         # =========================
 
         - task_key: bronze_ingest
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           depends_on:
             - task_key: raw_files_extraction
           spark_python_task:
@@ -44,7 +51,8 @@ resources:
         # =========================
 
         - task_key: silver_products
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           depends_on:
             - task_key: bronze_ingest
           spark_python_task:
@@ -55,7 +63,8 @@ resources:
           min_retry_interval_millis: 60000
 
         - task_key: silver_users
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           depends_on:
             - task_key: bronze_ingest
           spark_python_task:
@@ -66,7 +75,8 @@ resources:
           min_retry_interval_millis: 60000
 
         - task_key: silver_carts
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           depends_on:
             - task_key: bronze_ingest
           spark_python_task:
@@ -82,7 +92,8 @@ resources:
         # =========================
 
         - task_key: dim_date
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           spark_python_task:
             python_file: ../src/gold/dim_date.py
             parameters:
@@ -91,7 +102,8 @@ resources:
           min_retry_interval_millis: 60000
 
         - task_key: dim_product
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           depends_on:
             - task_key: silver_products
           spark_python_task:
@@ -102,7 +114,8 @@ resources:
           min_retry_interval_millis: 60000
 
         - task_key: dim_customer
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           depends_on:
             - task_key: silver_users
           spark_python_task:
@@ -118,7 +131,8 @@ resources:
         # =========================
 
         - task_key: fact_orders
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           depends_on:
             - task_key: dim_date
             - task_key: dim_product
@@ -137,7 +151,8 @@ resources:
         # =========================
 
         - task_key: gold_dq_checks
-          job_cluster_key: mia_job_cluster
+          # job_cluster_key: mia_job_cluster
+          environment_key: default
           depends_on:
             - task_key: fact_orders
           spark_python_task:
