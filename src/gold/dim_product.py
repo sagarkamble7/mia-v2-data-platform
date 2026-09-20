@@ -238,8 +238,8 @@ new_products = (
 )
 
 
-changed_products = changed_products.cache()
-new_products = new_products.cache()
+# changed_products = changed_products.cache()
+# new_products = new_products.cache()
 
 
 dim_product_table = DeltaTable.forName(

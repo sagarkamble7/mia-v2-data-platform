@@ -271,8 +271,8 @@ new_customers = (
 )
 
 
-changed_customers = changed_customers.cache()
-new_customers = new_customers.cache()
+# changed_customers = changed_customers.cache()
+# new_customers = new_customers.cache()
 
 
 dim_customer_table = DeltaTable.forName(
