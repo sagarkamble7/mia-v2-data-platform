@@ -6,7 +6,7 @@ from pyspark.sql.types import *
 # MOCKAROO READ AND WRITE AUTOLOADER
 # ============================================================
 
-schema_path = "abfss://bronze@miav2storage.dfs.core.windows.net/_schemas/mockaroo_products"
+schema_path = "abfss://bronze@miaprojectstorage.dfs.core.windows.net/_schemas/mockaroo_products"
 
 mockaroo_df = (
     spark.readStream
@@ -14,7 +14,7 @@ mockaroo_df = (
     .option("cloudFiles.format", "json")
     .option("cloudFiles.schemaLocation", schema_path)
     .option("cloudFiles.inferColumnTypes", "true")
-    .load("abfss://raw@miav2storage.dfs.core.windows.net/mockaroo")
+    .load("abfss://raw@miaprojectstorage.dfs.core.windows.net/mockaroo")
 )
 
 mockaroo_bronze_df = mockaroo_df.select(
@@ -33,11 +33,11 @@ query = (
     .format("delta")
     .option(
         "checkpointLocation",
-        "abfss://bronze@miav2storage.dfs.core.windows.net/_checkpoints/mockaroo_products"
+        "abfss://bronze@miaprojectstorage.dfs.core.windows.net/_checkpoints/mockaroo_products"
     )
     .outputMode("append")
     .trigger(availableNow=True)
-    .start("abfss://bronze@miav2storage.dfs.core.windows.net/mockaroo_products")
+    .start("abfss://bronze@miaprojectstorage.dfs.core.windows.net/mockaroo_products")
 )
 
 
