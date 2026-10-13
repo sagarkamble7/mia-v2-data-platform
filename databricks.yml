@@ -14,14 +14,14 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-7405607225047022.2.azuredatabricks.net
+      host: https://adb-7405604679687888.8.azuredatabricks.net
     variables:
       catalog: miav2databricks
 
   prod:
     mode: production
     workspace:
-      host: https://adb-7405607225047022.2.azuredatabricks.net
+      host: https://adb-7405604679687888.8.azuredatabricks.net
     variables:
       catalog: miav2databricks
 
