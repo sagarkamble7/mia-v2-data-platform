@@ -9,11 +9,11 @@ CATALOG = args.catalog
 
 
 bronze_carts_path = (
-    "abfss://bronze@miav2storage.dfs.core.windows.net/dummyjson/carts"
+    "abfss://bronze@miaprojectstorage.dfs.core.windows.net/dummyjson/carts"
 )
 
 silver_checkpoint_path = (
-    "abfss://silver@miav2storage.dfs.core.windows.net/_checkpoints/silver_carts_merge_v1"
+    "abfss://silver@miaprojectstorage.dfs.core.windows.net/_checkpoints/silver_carts_merge_v1"
 )
 
 silver_table = f"{CATALOG}.silver.silver_carts"

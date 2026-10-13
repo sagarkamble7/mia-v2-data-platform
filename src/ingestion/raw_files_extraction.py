@@ -24,7 +24,7 @@ BATCH_ID = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
 # MOCKAROO RAW PATHS
 # ============================================================
 
-landing_path = "abfss://raw@miav2storage.dfs.core.windows.net/mockaroo"
+landing_path = "abfss://raw@miaprojectstorage.dfs.core.windows.net/mockaroo"
 
 
 # ============================================================
@@ -134,7 +134,7 @@ dj_carts_raw = pull_all_dummyjson("carts", "carts")
 print(f"Carts pulled: {len(dj_carts_raw)}")
 
 
-raw_base_path = "abfss://raw@miav2storage.dfs.core.windows.net/dummyjson"
+raw_base_path = "abfss://raw@miaprojectstorage.dfs.core.windows.net/dummyjson"
 products_path = f"{raw_base_path}/products"
 users_path = f"{raw_base_path}/users"
 carts_path = f"{raw_base_path}/carts"
