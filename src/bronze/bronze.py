@@ -47,18 +47,18 @@ query = (
 
 from pyspark.sql.functions import input_file_name, current_timestamp
 
-raw_base_path = "abfss://raw@miav2storage.dfs.core.windows.net/dummyjson"
+raw_base_path = "abfss://raw@miaprojectstorage.dfs.core.windows.net/dummyjson"
 
 schema_base_path = (
-    "abfss://bronze@miav2storage.dfs.core.windows.net/_schemas/dummyjson"
+    "abfss://bronze@miaprojectstorage.dfs.core.windows.net/_schemas/dummyjson"
 )
 
 bronze_base_path = (
-    "abfss://bronze@miav2storage.dfs.core.windows.net/dummyjson"
+    "abfss://bronze@miaprojectstorage.dfs.core.windows.net/dummyjson"
 )
 
 bronze_checkpoint_base = (
-    "abfss://bronze@miav2storage.dfs.core.windows.net/_checkpoints/dummyjson"
+    "abfss://bronze@miaprojectstorage.dfs.core.windows.net/_checkpoints/dummyjson"
 )
 
 
