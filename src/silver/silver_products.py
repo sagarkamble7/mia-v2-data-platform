@@ -9,15 +9,15 @@ CATALOG = args.catalog
 
 
 bronze_mockaroo_path = (
-    "abfss://bronze@miav2storage.dfs.core.windows.net/mockaroo_products"
+    "abfss://bronze@miaprojectstorage.dfs.core.windows.net/mockaroo_products"
 )
 
 bronze_dummyjson_path = (
-    "abfss://bronze@miav2storage.dfs.core.windows.net/dummyjson/products"
+    "abfss://bronze@miaprojectstorage.dfs.core.windows.net/dummyjson/products"
 )
 
 silver_checkpoint_path = (
-    "abfss://silver@miav2storage.dfs.core.windows.net/_checkpoints/silver_products_merge_v1"
+    "abfss://silver@miaprojectstorage.dfs.core.windows.net/_checkpoints/silver_products_merge_v1"
 )
 
 silver_table = f"{CATALOG}.silver.silver_products"

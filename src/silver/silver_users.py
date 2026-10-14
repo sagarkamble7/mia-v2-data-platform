@@ -8,11 +8,11 @@ args = parser.parse_args()
 CATALOG = args.catalog
 
 bronze_users_path = (
-    "abfss://bronze@miav2storage.dfs.core.windows.net/dummyjson/users"
+    "abfss://bronze@miaprojectstorage.dfs.core.windows.net/dummyjson/users"
 )
 
 silver_checkpoint_path = (
-    "abfss://silver@miav2storage.dfs.core.windows.net/_checkpoints/silver_users_merge_v1"
+    "abfss://silver@miaprojectstorage.dfs.core.windows.net/_checkpoints/silver_users_merge_v1"
 )
 
 silver_table = f"{CATALOG}.silver.silver_users"
