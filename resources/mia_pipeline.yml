@@ -165,9 +165,9 @@ resources:
       # SCHEDULE
       # =========================
 
-      schedule:
-        quartz_cron_expression: "0 0 3 * * ?"
-        timezone_id: "Asia/Kolkata"
+      # schedule:
+      #   quartz_cron_expression: "0 0 3 * * ?"
+      #   timezone_id: "Asia/Kolkata"
 
 
       # =========================
